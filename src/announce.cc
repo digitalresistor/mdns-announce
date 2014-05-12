@@ -38,5 +38,25 @@ int main(int argc, char *argv[]) {
         std::cerr << "Version: " << VERSION << std::endl;
         return -1;
     }
+
+    std::vector<std::string> _domains;
+    try {
+        std::ifstream f(argv[1], std::ios::in | std::ios::binary);
+
+        if (!f.is_open()) {
+            std::cerr << "Unable to open file: " << argv[1] << std::endl;
+            return -2;
+        }
+
+        for (std::string line; std::getline(f, line); /**/) {
+            if (line.length() != 0) _domains.push_back(line);
+        }
+        for (auto &d : _domains) {
+            std::cout << "Registering Domain: " << d << std::endl;
+
+        }
+    } catch (std::exception const& e) {
+        std::cerr << "Caught an exception: " << e.what() << std::endl;
+    }
     return 0;
 }
