@@ -40,6 +40,10 @@ int main(int argc, char *argv[]) {
     }
 
     std::vector<std::string> _domains;
+
+    DNSServiceRef serviceRef = 0;
+    int dns_sd_fd = -1;
+
     try {
         std::ifstream f(argv[1], std::ios::in | std::ios::binary);
 
@@ -51,6 +55,13 @@ int main(int argc, char *argv[]) {
         for (std::string line; std::getline(f, line); /**/) {
             if (line.length() != 0) _domains.push_back(line);
         }
+
+        DNSServiceErrorType error = kDNSServiceErr_NoError;
+
+        // Setup the mDNS context...
+        error = DNSServiceCreateConnection(&serviceRef);
+        check_dnsservice_errors(error, "DNSServiceCreateConnection");
+
         for (auto &d : _domains) {
             std::cout << "Registering Domain: " << d << std::endl;
 
@@ -58,5 +69,8 @@ int main(int argc, char *argv[]) {
     } catch (std::exception const& e) {
         std::cerr << "Caught an exception: " << e.what() << std::endl;
     }
+
+    DNSServiceRefDeallocate(serviceRef);
+
     return 0;
 }
