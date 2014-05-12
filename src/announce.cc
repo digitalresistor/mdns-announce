@@ -40,6 +40,14 @@ inline void check_dnsservice_errors(DNSServiceErrorType& e, const std::string& f
     throw std::runtime_error(error.c_str());
 }
 
+static void CallBack(DNSServiceRef, DNSRecordRef, const DNSServiceFlags, DNSServiceErrorType errorCode, void *context)
+{
+    std::string *name = reinterpret_cast<std::string*>(context);
+
+    std::cout << "Successfully registered: " << *name << std::endl;
+    check_dnsservice_errors(errorCode, "CallBack");
+}
+
 inline void signal_int(ev::sig& sig, int) {
     auto *_data = reinterpret_cast<std::tuple<DNSServiceRef, std::vector<DNSRecordRef>>*>(sig.data);
 
