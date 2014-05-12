@@ -1,4 +1,8 @@
+#include <fstream>
 #include <iostream>
+#include <stdexcept>
+#include <string>
+#include <vector>
 #include <dns_sd.h>
 #include <ev++.h>
 
