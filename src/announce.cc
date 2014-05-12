@@ -3,6 +3,9 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+#include <signal.h>
+
 #include <dns_sd.h>
 #include <ev++.h>
 
@@ -34,6 +37,12 @@ inline void check_dnsservice_errors(DNSServiceErrorType& e, const std::string& f
     }
 
     throw std::runtime_error(error.c_str());
+}
+
+inline void signal_int(ev::sig& sig, int) {
+    std::cerr << std::endl << "Caught SIGINT..." << std::endl;
+
+    sig.loop.break_loop();
 }
 
 int main(int argc, char *argv[]) {
@@ -70,6 +79,22 @@ int main(int argc, char *argv[]) {
             std::cout << "Registering Domain: " << d << std::endl;
 
         }
+
+        // Add event for catching SIGINT, so we can do proper cleanup
+        ev::sig sio;
+        sio.set<signal_int>();
+        sio.start(SIGINT);
+
+        // Ignore SIGPIPE
+        struct sigaction act;
+        act.sa_handler = SIG_IGN;
+        sigemptyset(&act.sa_mask);
+        act.sa_flags = 0;
+        sigaction(SIGPIPE, &act, 0);
+
+        // start the libev loop
+        ev::default_loop loop;
+        loop.run(0);
     } catch (std::exception const& e) {
         std::cerr << "Caught an exception: " << e.what() << std::endl;
     }
