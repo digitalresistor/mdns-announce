@@ -1,0 +1,17 @@
+srcfiles = [
+            'announce.cc',
+        ]
+
+import os
+
+def build(ctx):
+    print('→ build from ' + ctx.path.abspath())
+
+    ctx.program(source=srcfiles,
+            target='mdns-announce',
+            use=['LIBEV', 'LIBDNS_SD'],
+            install_path="${PREFIX}/bin",
+            )
+
+def configure(cfg):
+    pass
