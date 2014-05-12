@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <tuple>
 
 #include <signal.h>
 
@@ -40,7 +41,25 @@ inline void check_dnsservice_errors(DNSServiceErrorType& e, const std::string& f
 }
 
 inline void signal_int(ev::sig& sig, int) {
+    auto *_data = reinterpret_cast<std::tuple<DNSServiceRef, std::vector<DNSRecordRef>>*>(sig.data);
+
     std::cerr << std::endl << "Caught SIGINT..." << std::endl;
+    std::cout << "Deallocating records";
+    for (auto &rec : std::get<1>(*_data)) {
+        try {
+            DNSServiceErrorType error;
+            error = DNSServiceRemoveRecord(
+                    std::get<0>(*_data),
+                    rec,
+                    0
+                    );
+
+            check_dnsservice_errors(error, "DNSServiceRemoveRecord");
+        } catch (std::exception const& e) {
+            std::cerr << "Caught an exception: " << e.what() << std::endl;
+        }
+    }
+    std::cout << " [done]" << std::endl;
 
     sig.loop.break_loop();
 }
@@ -57,6 +76,8 @@ int main(int argc, char *argv[]) {
 
     DNSServiceRef serviceRef = 0;
     int dns_sd_fd = -1;
+
+    std::tuple<DNSServiceRef, std::vector<DNSRecordRef>> _sigint_data;
 
     try {
         std::ifstream f(argv[1], std::ios::in | std::ios::binary);
@@ -102,9 +123,10 @@ int main(int argc, char *argv[]) {
 
         }
 
+        _sigint_data = std::make_tuple(serviceRef, _records);
         // Add event for catching SIGINT, so we can do proper cleanup
         ev::sig sio;
-        sio.set<signal_int>();
+        sio.set<signal_int>(reinterpret_cast<void *>(&_sigint_data));
         sio.start(SIGINT);
 
         // Ignore SIGPIPE
