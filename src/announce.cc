@@ -48,6 +48,15 @@ static void CallBack(DNSServiceRef, DNSRecordRef, const DNSServiceFlags, DNSServ
     check_dnsservice_errors(errorCode, "CallBack");
 }
 
+void ev_mdns_watcher(ev::io &w, int) {
+    DNSServiceRef serviceRef = reinterpret_cast<DNSServiceRef>(w.data);
+
+    DNSServiceErrorType error = kDNSServiceErr_NoError;
+    error = DNSServiceProcessResult(serviceRef);
+
+    check_dnsservice_errors(error, "ev_mdns_watcher(DNSServiceProcessResult)");
+}
+
 inline void signal_int(ev::sig& sig, int) {
     auto *_data = reinterpret_cast<std::tuple<DNSServiceRef, std::vector<DNSRecordRef>>*>(sig.data);
 
@@ -131,6 +140,8 @@ int main(int argc, char *argv[]) {
 
         }
 
+        dns_sd_fd = DNSServiceRefSockFD(serviceRef);
+
         _sigint_data = std::make_tuple(serviceRef, _records);
         // Add event for catching SIGINT, so we can do proper cleanup
         ev::sig sio;
@@ -143,6 +154,11 @@ int main(int argc, char *argv[]) {
         sigemptyset(&act.sa_mask);
         act.sa_flags = 0;
         sigaction(SIGPIPE, &act, 0);
+
+        ev::io mdns_watch;
+        mdns_watch.set<ev_mdns_watcher>(reinterpret_cast<void *>(serviceRef));
+        mdns_watch.set(dns_sd_fd, ev::READ);
+        mdns_watch.start();
 
         // start the libev loop
         ev::default_loop loop;
