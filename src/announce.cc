@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
     }
 
     std::vector<std::string> _domains;
+    std::vector<DNSRecordRef> _records;
 
     DNSServiceRef serviceRef = 0;
     int dns_sd_fd = -1;
@@ -77,6 +78,27 @@ int main(int argc, char *argv[]) {
 
         for (auto &d : _domains) {
             std::cout << "Registering Domain: " << d << std::endl;
+            DNSRecordRef record = 0;
+
+            const char cname[] = { 9, 'a', 'l', 'e', 'x', 'a', 'n', 'd', 'r', 'a', 5, 'l', 'o', 'c', 'a', 'l', 0 };
+
+            error = DNSServiceRegisterRecord(
+                    serviceRef,                     // DNSServiceRef
+                    &record,                        // DNSRecordRef
+                    kDNSServiceFlagsShareConnection | kDNSServiceFlagsUnique,         // DNSServiceFlags
+                    kDNSServiceInterfaceIndexAny,   // uint32_t interfaceIndex
+                    d.c_str(),                      // fullname
+                    kDNSServiceType_CNAME,          // rrtype
+                    kDNSServiceClass_IN,            // rrclass
+                    sizeof(cname),                  // rdlen
+                    cname,                          // rdata (const void)
+                    0,                              // uint32_t ttl
+                    CallBack,                       // Callback
+                    reinterpret_cast<void*>(&d)     // Context
+                    );
+
+            check_dnsservice_errors(error, "DNSServiceRegisterRecord");
+            _records.push_back(record);
 
         }
 
