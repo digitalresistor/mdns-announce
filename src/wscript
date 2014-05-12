@@ -15,7 +15,7 @@ def build(ctx):
 
     ctx.program(source=srcfiles,
             target='mdns-announce',
-            use=['LIBEV', 'LIBDNS_SD'],
+            use=['EV', 'DNS_SD'],
             includes=['.'],
             )
 

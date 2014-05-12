@@ -54,6 +54,7 @@ def configure(cfg):
             lib='ev',
             header_name='ev++.h',
             msg='Checking for libev',
+            uselib_store='EV',
             )
 
     cfg.check_cxx(
@@ -66,6 +67,7 @@ def configure(cfg):
             lib='dns_sd',
             msg='Checking for dns_sd (Avahi compat layer)',
             define_name='AVAHI',
+            uselib_store='DNS_SD',
             mandatory=False
             )
 
