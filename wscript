@@ -30,6 +30,11 @@ def configure(cfg):
     cfg.env.VERSION = VERSION
     cfg.env.APPNAME = APPNAME
 
+    git_version = try_git_version()
+
+    if git_version:
+        cfg.env.VERSION += '-' + git_version
+
     if cfg.options.compiler == 'clang':
         cfg.env['CC'] = "clang"
         cfg.env['CXX'] = "clang++"
@@ -154,3 +159,14 @@ def check_c_flag(ctx, flag, required=False):
             raise Errors.WafError('Compiler flag "{}" is required'.format(flag))
         env.revert()
         return False
+
+import os
+import sys
+
+def try_git_version():
+    version = None
+    try:
+        version = os.popen('git describe --always --dirty --long').read().strip()
+    except Exception as e:
+        print e
+    return version

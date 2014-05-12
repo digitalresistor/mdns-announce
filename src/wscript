@@ -7,10 +7,16 @@ import os
 def build(ctx):
     print('→ build from ' + ctx.path.abspath())
 
+    ctx(features='subst',
+            source='build_version.h.in',
+            target='build_version.h',
+            VERSION = ctx.env['VERSION'],
+            )
+
     ctx.program(source=srcfiles,
             target='mdns-announce',
             use=['LIBEV', 'LIBDNS_SD'],
-            install_path="${PREFIX}/bin",
+            includes=['.'],
             )
 
 def configure(cfg):
