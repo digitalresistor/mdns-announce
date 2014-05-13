@@ -1,4 +1,14 @@
 0.0.0
 =====
 
+ - Use gethostname() to replace $self when creating CNAME entries
+
+ - The domains file can now contain entries that look like this:
+
+   com.example.local:example.com
+
+   Or
+
+   example.local:$self
+
  - This is the first version
