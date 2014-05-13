@@ -1,0 +1,58 @@
+mdns-announce
+=============
+
+This is a tool that will use mDNS (Bonjour) to advertise a CNAME record.
+
+For developing web applications, it can be handy to have the ability to create
+various fake DNS entries that can be used with virtual hosting.
+
+This was mainly developed to help build github.com/usingnamespace which uses
+virtual hosting to differentiate between different blogs.
+
+Requirements for building
+-------------------------
+
+You will need the following dependencies installed:
+
+ Mac OS X:
+
+   - libev
+
+       brew install libev
+
+ Other:
+
+   - libev
+   - dns_sd (Avahi or other)
+
+Building
+--------
+
+  ./waf configure
+  ./waf build_release
+
+Running
+-------
+
+  ./build/release/src/mdns-announce test.domains
+
+
+Now if you open a new terminal in the same directory, you can run the following:
+
+  for I in `cat test.domains`; do 
+    dig @224.0.0.251 -p 5353 -t CNAME $I | grep CNAME | grep -v ";"
+  done
+
+Developing
+----------
+
+  - Fork the project.
+  - Make your feature addition or bug fix.
+  - Commit
+  - Send me a pull request. Bonus points for topic branches.
+
+Debug builds can be created like this:
+
+  ./waf build
+
+This will drop a debug binary in ./build/debug/src/mdns-announce.
