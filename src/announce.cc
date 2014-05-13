@@ -13,6 +13,7 @@
 #include <ev++.h>
 
 #include "build_version.h"
+#include "dnsstring.h"
 #include "error.h"
 
 static void CallBack(DNSServiceRef, DNSRecordRef, const DNSServiceFlags, DNSServiceErrorType errorCode, void *context)
@@ -115,11 +116,11 @@ int main(int argc, char *argv[]) {
 
         for (auto &dtocname : _domains) {
             std::string &d = std::get<0>(dtocname);
+            std::string &c = std::get<1>(dtocname);
+            std::string scname = to_dnsstring(c);
 
-            std::cout << "Registering Domain: " << d << std::endl;
+            std::cout << "Registering Domain: " << d << " -> " << c << std::endl;
             DNSRecordRef record = 0;
-
-            const char cname[] = { 9, 'a', 'l', 'e', 'x', 'a', 'n', 'd', 'r', 'a', 5, 'l', 'o', 'c', 'a', 'l', 0 };
 
             error = DNSServiceRegisterRecord(
                     serviceRef,                     // DNSServiceRef
@@ -129,8 +130,8 @@ int main(int argc, char *argv[]) {
                     d.c_str(),                      // fullname
                     kDNSServiceType_CNAME,          // rrtype
                     kDNSServiceClass_IN,            // rrclass
-                    sizeof(cname),                  // rdlen
-                    cname,                          // rdata (const void)
+                    scname.length(),                // rdlen
+                    scname.c_str(),                 // rdata (const void)
                     0,                              // uint32_t ttl
                     CallBack,                       // Callback
                     reinterpret_cast<void*>(&d)     // Context
