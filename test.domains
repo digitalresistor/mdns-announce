@@ -1,6 +1,7 @@
 test.local:$self
-com.example.test.local:$self
-net.example.test.local:$self
+com.example.test.local:example.com
+net.example.test.local:example.net
+org.example.test.local:example.org
 www.test.local:$self
 a.usingnamespace.local:$self
 b.usingnamespace.local:$self
