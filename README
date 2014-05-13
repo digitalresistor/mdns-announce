@@ -16,12 +16,14 @@ You will need the following dependencies installed:
 
  Mac OS X:
 
+   - Compiler with C++11 support (clang is default)
    - libev
 
        brew install libev
 
  Other:
 
+   - Compiler with C++11 support
    - libev
    - dns_sd (Avahi or other)
 
@@ -31,11 +33,15 @@ Building
   ./waf configure
   ./waf build_release
 
+If you want to build using GCC (the build defaults to clang):
+
+  ./waf configure --compiler=gcc
+  ./waf build_release
+
 Running
 -------
 
   ./build/release/src/mdns-announce test.domains
-
 
 Now if you open a new terminal in the same directory, you can run the following:
 
