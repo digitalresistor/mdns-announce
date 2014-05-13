@@ -1,10 +1,13 @@
 #include <fstream>
 #include <iostream>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <vector>
 
 #include <signal.h>
+#include <unistd.h>
 
 #include <dns_sd.h>
 #include <ev++.h>
@@ -60,8 +63,9 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    std::vector<std::string> _domains;
+    std::vector<std::tuple<std::string, std::string>> _domains;
     std::vector<DNSRecordRef> _records;
+    std::string hostname;
 
     DNSServiceRef serviceRef = 0;
     int dns_sd_fd = -1;
@@ -77,7 +81,30 @@ int main(int argc, char *argv[]) {
         }
 
         for (std::string line; std::getline(f, line); /**/) {
-            if (line.length() != 0) _domains.push_back(line);
+            if (line.length() != 0) {
+                std::stringstream l(line);
+
+                std::string domain, cname;
+
+                std::getline(l, domain, ':');
+                std::getline(l, cname);
+
+                if (cname == std::string("$self")) {
+                    if (hostname.length() == 0) {
+                        char _hostname[256] = {0};
+
+                        if (gethostname(_hostname, sizeof(_hostname)) == -1) {
+                            throw std::runtime_error("gethostname: Failed to get current hostname...");
+                        }
+
+                        hostname = std::string(_hostname);
+                    }
+
+                    cname = hostname;
+                }
+
+                _domains.push_back(std::make_tuple(domain, cname));
+            }
         }
 
         DNSServiceErrorType error = kDNSServiceErr_NoError;
@@ -86,7 +113,9 @@ int main(int argc, char *argv[]) {
         error = DNSServiceCreateConnection(&serviceRef);
         check_dnsservice_errors(error, "DNSServiceCreateConnection");
 
-        for (auto &d : _domains) {
+        for (auto &dtocname : _domains) {
+            std::string &d = std::get<0>(dtocname);
+
             std::cout << "Registering Domain: " << d << std::endl;
             DNSRecordRef record = 0;
 
