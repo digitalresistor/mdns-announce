@@ -50,6 +50,28 @@ to see that they are being announced as set in the file.
     dig @224.0.0.251 -p 5353 -t CNAME $I | grep CNAME | grep -v ";"
   done
 
+File Format
+-----------
+
+The file format is very simple:
+
+  <local domain>:<cname pointer>
+
+For example:
+
+  com.example.local:example.com
+  net.example.local:example.net
+
+If you want to allow the file to easily be transferred from system to system
+(such as when working on an application with others, you can use $self to refer
+to the current system).
+
+$self will get replaced with the current systems hostname as returned by
+gethostname(3).
+
+  test.local:$self
+  www.test.local:$self
+
 Developing
 ----------
 
