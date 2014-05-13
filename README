@@ -43,7 +43,8 @@ Running
 
   ./build/release/src/mdns-announce test.domains
 
-Now if you open a new terminal in the same directory, you can run the following:
+Now if you open a new terminal in the same directory, you can run the following
+to see that they are being announced as set in the file.
 
   for I in `cat test.domains | awk -F : '{ print $1 }'`; do
     dig @224.0.0.251 -p 5353 -t CNAME $I | grep CNAME | grep -v ";"
