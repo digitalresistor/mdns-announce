@@ -1,5 +1,6 @@
 srcfiles = [
             'announce.cc',
+            'error.cc',
         ]
 
 import os
