@@ -2,3 +2,8 @@ test.local
 com.example.test.local
 net.example.test.local
 www.test.local
+a.usingnamespace.local
+b.usingnamespace.local
+c.usingnamespace.local
+management.usingnamespace.local
+api.usingnamespace.local
