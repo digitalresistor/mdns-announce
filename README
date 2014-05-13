@@ -39,7 +39,7 @@ Running
 
 Now if you open a new terminal in the same directory, you can run the following:
 
-  for I in `cat test.domains`; do 
+  for I in `cat test.domains | awk -F : '{ print $1 }'`; do
     dig @224.0.0.251 -p 5353 -t CNAME $I | grep CNAME | grep -v ";"
   done
 
