@@ -98,7 +98,7 @@ def configure(cfg):
     # Create a clean default environment
     cfg.setenv('default', default_env)
 
-    cfg.recurse('src tests')
+    cfg.recurse('src')
 
 
 def build(ctx):
