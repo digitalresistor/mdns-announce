@@ -1,16 +1,7 @@
 #ifndef REGISTRATION_DOMAINS_H_A532E0ABCD5F4F
 #define REGISTRATION_DOMAINS_H_A532E0ABCD5F4F
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-#include <tuple>
-#include <vector>
-
-#include <signal.h>
-#include <unistd.h>
+#include <functional>
 
 #include <dns_sd.h>
 #include <ev++.h>

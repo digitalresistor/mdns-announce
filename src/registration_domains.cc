@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "registration_domains.h"
 #include "error.h"
 
