@@ -73,14 +73,23 @@ int main(int argc, char *argv[]) {
     std::tuple<DNSServiceRef, std::vector<DNSRecordRef>> _sigint_data;
 
     try {
-        std::ifstream f(argv[1], std::ios::in | std::ios::binary);
+        std::ifstream f;
+        std::istream *in;
 
-        if (!f.is_open()) {
-            std::cerr << "Unable to open file: " << argv[1] << std::endl;
-            return -2;
+        if (std::string(argv[1]) == "-") {
+            in = &std::cin;
+        } else {
+            f.open(argv[1], std::ios::in | std::ios::binary);
+
+            if (!f.is_open()) {
+                std::cerr << "Unable to open file: " << argv[1] << std::endl;
+                return -2;
+            }
+
+            in = &f;
         }
 
-        for (std::string line; std::getline(f, line); /**/) {
+        for (std::string line; std::getline(*in, line); /**/) {
             if (line.length() != 0) {
                 std::stringstream l(line);
 
