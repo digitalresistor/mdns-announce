@@ -16,8 +16,7 @@
 #include "dnsstring.h"
 #include "error.h"
 
-static void CallBack(DNSServiceRef, DNSRecordRef, const DNSServiceFlags, DNSServiceErrorType errorCode, void *context)
-{
+static void CallBack(DNSServiceRef, DNSRecordRef, const DNSServiceFlags, DNSServiceErrorType errorCode, void *context) {
     std::string *name = reinterpret_cast<std::string*>(context);
 
     std::cout << "Successfully registered: " << *name << std::endl;
