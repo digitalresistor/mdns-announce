@@ -49,7 +49,7 @@ std::string to_dnsstring(const std::string& s) {
         _dnsstr += static_cast<unsigned char>(static_cast<uint8_t>(0));
     }
 #ifdef DEBUG
-    std::cerr << string_to_hex(_dnsstr.c_str()) << std::endl;
+    std::cerr << string_to_hex(_dnsstr) << std::endl;
 #endif
 
     return _dnsstr;
