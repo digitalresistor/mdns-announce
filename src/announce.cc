@@ -15,6 +15,7 @@
 #include "build_version.h"
 #include "dnsstring.h"
 #include "error.h"
+#include "registration_domains.h"
 
 static void CallBack(DNSServiceRef, DNSRecordRef, const DNSServiceFlags, DNSServiceErrorType errorCode, void *context) {
     std::string *name = reinterpret_cast<std::string*>(context);
@@ -169,6 +170,10 @@ int main(int argc, char *argv[]) {
         mdns_watch.set<ev_mdns_watcher>(reinterpret_cast<void *>(serviceRef));
         mdns_watch.set(dns_sd_fd, ev::READ);
         mdns_watch.start();
+
+        auto d_ready = [](const std::string& d) { std::cerr << "Domain is ready: " << d << std::endl; };
+
+        RegistrationDomains _rdomains(d_ready);
 
         // start the libev loop
         ev::default_loop loop;
