@@ -2,6 +2,8 @@ srcfiles = [
             'announce.cc',
             'error.cc',
             'registration_domains.cc',
+            'register_records.cc',
+            'record.cc',
             'dnsstring.cc',
         ]
 
