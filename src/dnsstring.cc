@@ -43,8 +43,11 @@ std::string to_dnsstring(const std::string& s) {
         _dnsstr += std::string(begin, cur);
     }
 
-    // Append extra \0
-    _dnsstr += static_cast<unsigned char>(static_cast<uint8_t>(0));
+    // Append extra \0 if needed
+    
+    if (*(_dnsstr.rbegin()) != 0) {
+        _dnsstr += static_cast<unsigned char>(static_cast<uint8_t>(0));
+    }
 #ifdef DEBUG
     std::cerr << string_to_hex(_dnsstr.c_str()) << std::endl;
 #endif
